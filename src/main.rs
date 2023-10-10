@@ -1,6 +1,5 @@
 use std::io;
 use serde::{Deserialize, Serialize};
-//use check_csvisation::{answer, categorise, csv, parse};
 
 #[derive(Deserialize)]
 #[derive(Debug)]
@@ -38,7 +37,6 @@ struct Item{
     quantity: i32,
 }
 
-const INPUT: [(&str, &str); 2] = [("qrraw", "t=20230925T1626&s=369.00&fn=9961440300825334&i=32808&fp=634850959&n=1"), ("token", "23978.O0NclvxcsqOu9thkz")];
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error>{
@@ -46,7 +44,14 @@ async fn main() -> Result<(), reqwest::Error>{
     loop{
         let mut input = String::new();
         io::stdin().read_line(&mut input).expect("Input error");
-        let req = [("qrraw", input.strip_prefix("QR-Code:").unwrap().trim_end()), ("token", "23978.O0NclvxcsqOu9thkz")];
+        let input = match input.strip_prefix("QR-Code:"){
+            None => match input.as_str(){
+                "" => return Ok(()),
+                _ => continue,
+            },
+            Some(x) => x.trim_end(),
+        };
+        let req = [("qrraw", input), ("token", "23978.O0NclvxcsqOu9thkz")];
         let req_answer: Data = client
             .post("https://proverkacheka.com/api/v1/check/get")
             .form(&req)
