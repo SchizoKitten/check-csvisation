@@ -1,5 +1,10 @@
+mod api_token;
+use crate::api_token::TOKEN;
+
 use std::io;
 use serde::{Deserialize, Serialize};
+
+
 
 #[derive(Deserialize)]
 #[derive(Debug)]
@@ -51,7 +56,7 @@ async fn main() -> Result<(), reqwest::Error>{
             },
             Some(x) => x.trim_end(),
         };
-        let req = [("qrraw", input), ("token", "23978.O0NclvxcsqOu9thkz")];
+        let req = [("qrraw", input), ("token", TOKEN)];
         let req_answer: Data = client
             .post("https://proverkacheka.com/api/v1/check/get")
             .form(&req)
